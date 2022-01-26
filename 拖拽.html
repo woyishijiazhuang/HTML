@@ -1,0 +1,59 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+<style>
+    body{
+        background-color: seagreen;
+    }
+    .login {
+        position:fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%,-50%);
+        width: 180px;
+        height: 100px;
+        background-color: dodgerblue;
+        box-shadow: black 2px;
+    }
+    h2{
+        margin: 0px;
+        cursor: move;
+        user-select: none;
+        background-color: rgba(100, 100, 100, 0.8);
+    }
+</style>
+<body>
+    
+    <div class="login">
+        <h2>login</h2>
+        <div class="close"></div>
+    </div>
+    <script>
+        var login = document.querySelector('.login>h2');
+        var fun;
+        login.addEventListener('mousedown',function(e){
+            var father = this.parentNode;
+            var x = e.clientX - father.offsetLeft;
+            var y = e.clientY - father.offsetTop;
+            document.addEventListener('mousemove',fun = function (event){
+                if(window.innerHeight < event.clientY
+                 || window.innerWidth < event.clientX
+                 || 0 > event.clientX || 0 > event.clientY){
+                    return 0;
+                }
+                father.style.left = event.clientX - x + 'px';
+                father.style.top = event.clientY - y + 'px';
+            })
+        })
+        document.addEventListener('mouseup',function(){
+            document.removeEventListener('mousemove',fun);
+        })
+
+    </script>
+</body>
+</html>

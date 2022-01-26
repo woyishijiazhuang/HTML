@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        ul {
+            position: relative;
+            margin: 0;
+            padding: 0;
+            background-color: seashell;
+            list-style: none;
+            /* min-width: 1000px; */
+            width: max-content;
+        }
+        ul>li {
+            float: left;
+            width: 200px;
+            height: 50px;
+            border: 1px black solid;
+            box-sizing: border-box;
+        }
+        ul>li:last-child {
+            float: none;
+            background-color: skyblue;
+            transition: margin 0.3s ease-in-out;
+        }
+    </style>
+</head>
+<body>
+    <ul>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+        <li></li>
+    </ul>
+
+    <script>
+        var lili = document.querySelectorAll('li');
+        var marginL = lili[lili.length-1 ].offsetLeft;
+        for(let i=0;i<lili.length-1;i++){
+            lili[i].addEventListener('mouseenter',function(){
+                lili[lili.length-1].style.marginLeft = 200*i + 'px';
+            })
+            lili[i].addEventListener('mouseleave',function(){
+                lili[lili.length-1].style.marginLeft = marginL + 'px';
+            })
+            lili[i].addEventListener('click',function(){
+                lili[lili.length-1].style.marginLeft = 200*i + 'px';
+                marginL = 200*i;
+            })
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="zh-en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        body {
+            margin: 0px;
+        }
+
+        .shop {
+            position: relative;
+            width: 400px;
+            height: 242px;
+            background: url(94748376_p0.jpg) no-repeat;
+            background-size: 400px auto;
+        }
+
+        .yellow-block {
+            display: none;
+            position: absolute;
+            transform: translate(-50%, -50%);
+            /*52 = bigImg.width/原图宽度*shop宽度 */
+            width: 52px;
+            height: 52px;
+            background-color: rgba(217, 255, 81, 0.4);
+            border: 1px yellow solid;
+        }
+
+        .big-img {
+            display: none;
+            position: absolute;
+            left: 450px;
+            width: 600px;
+            height: 600px;
+            border: 1px black solid;
+            background: url(94748376_p0.jpg) no-repeat;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="shop">
+        <div class="yellow-block"></div>
+        <div class="big-img"></div>
+    </div>
+    <script>
+        var shop = document.querySelector('.shop');
+        var yellowBlock = document.querySelector('.yellow-block')
+        var bigImg = document.querySelector('.big-img');
+        shop.addEventListener('mouseover', function () {
+            yellowBlock.style.display = 'block';
+            bigImg.style.display = 'block';
+        })
+        shop.addEventListener('mousemove', function (e) {
+            yellowBlock.style.top = e.pageY - this.offsetTop + 'px';
+            yellowBlock.style.left = e.pageX - this.offsetLeft + 'px';
+            bigImg.style.backgroundPosition =
+            (this.offsetLeft - e.pageX) * 4595 / this.offsetWidth + bigImg.offsetWidth / 2 + 'px '
+            + ((this.offsetTop - e.pageY) * 2784 / this.offsetHeight + bigImg.offsetWidth / 2) + 'px';
+            if (yellowBlock.offsetTop < 0 || yellowBlock.offsetTop > shop.offsetHeight ||
+                yellowBlock.offsetLeft < 0 || yellowBlock.offsetLeft > shop.offsetWidth) {
+                bigImg.style.display = 'none';
+                yellowBlock.style.display = 'none';
+            }
+        })
+        shop.addEventListener('mouseout', function () {
+            bigImg.style.display = 'none';
+            yellowBlock.style.display = 'none';
+        }) 
+    </script>
+</body>
+
+</html>

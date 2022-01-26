@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="zh-en">
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <style>
+        /* 清除默认style */
+        ul, ol {
+            list-style: none;
+            margin: 0px;
+            padding: 0px;
+        }
+        /* 轮播图主题 */
+        .banner {
+            position: relative;
+            width: 400px;
+            height: 220px;
+            margin: 100px auto;
+            overflow: hidden;
+        }
+        /* 存放图片的ul */
+        .img { 
+            height: inherit;
+            /* 足够的宽度让浮动的图片放入 */
+            width: 2000px;
+            /*实际上第二张图片才是播放的第一张,所有margin初始值为-400*/
+            margin-left: -400px;
+            /* 播放效果用过渡 */
+            transition: margin 1s ease;
+        }
+        /* 使用背景图,后期在li>a>img放入图片 */
+        .img>li {
+            float: left;
+            width: 400px;
+            height: inherit;
+            box-sizing: border-box;
+            border: black 1px solid;
+            /*文字*/
+            font-size: 100px;
+            line-height: 220px;
+            text-align: center;
+            color: black;
+        }
+        /* 显示播放进度的白点 */
+        .dot {
+            position: absolute;
+            left: 50%;
+            bottom: 20px;
+            transform: translateX(-50%);
+            background-color: #c7c7c7;
+            padding: 4px;
+            border-radius: 10px;
+        }
+        .dot>li {
+            float: left;
+            width: 10px;
+            height: 10px;
+            margin: 0 5px;
+            background-color: white;
+            border-radius: 50%;
+        }
+        .dot>li:first-child {
+            background-color: #8ff0ec;
+        }       
+    </style>
+</head>
+<body>
+    <div class="banner">
+        <ul class="img">
+            <li>end</li>
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+            <li>end</li>
+        </ul>
+        <!-- dot>li要比img>li少一个 -->
+        <ul class="dot">
+            <li></li>
+            <li></li>
+            <li></li>
+            <li></li>
+        </ul>
+    </div>
+    <script>
+        var banner = document.querySelector('.banner');//获取轮播图主体
+        var img = banner.querySelector('.img');//获取装着图片的ul,ul第一张与最后一张相同
+        var lili = banner.querySelectorAll('.dot>li');//获取所有的小圆点
+        var color1 = '#48D1CC';//对应图片的小圆点的凸显颜色
+        var color2 = 'white';//小圆点的默认颜色
+        var time1 = 3000;//播放速度
+        var d = setInterval(fun,time1);//定时播放
+        var x = banner.offsetWidth;//每次移动的距离-单张图片的宽度   
+
+        //这个函数修改了img的marginLeft值,配合transition实现动画,同时根据marginLeft凸显图片对应的小圆点
+        function fun(){
+            if(img.offsetLeft<= -(img.querySelectorAll('li').length-1)*x){//如果到了最后一张图
+                // 清除过渡
+                img.style.transition = 'margin 0s';
+                //闪现到第一张图
+                img.style.marginLeft = '0px';
+                //没有这个会产生bug
+                img.offsetLeft;
+                //再添加过渡
+                img.style.transition = 'margin 1s ease 0s';
+            }
+            //通过修改img.marginLeft实现每次过渡   
+            img.style.marginLeft = img.offsetLeft - x + 'px';
+            // img.style.marginLeft = parseInt(img.style.marginLeft) - x + 'px';
+            //清除所有小圆点的背景,根据img.offsetLeft凸显当前图片对应的小圆点
+            for(let i=0;i<lili.length;i++){
+                lili[i].style.backgroundColor = color2;
+            }
+            lili[-img.offsetLeft/x].style.backgroundColor = color1;
+        }
+        // 给小圆点添加mouseenter和mouseleave事件,控制
+        for(let i = 0; i<lili.length; i++){
+            //鼠标在小圆点上时,停止播放,显示对应图片,并让自己凸显
+            lili[i].addEventListener('mouseenter',function(){
+                clearInterval(d);
+                img.style.marginLeft = -(i+1) * x + 'px';
+                for(let j = 0; j<lili.length; j++){
+                    lili[j].style.backgroundColor = color2;
+                }
+                lili[i].style.backgroundColor = color1;
+            })
+            lili[i].addEventListener('mouseleave',function(){
+                d = setInterval(fun,time1);
+            })
+        }
+        // 鼠标悬停在图片上停止自动播放
+        img.addEventListener('mouseenter',function(){
+            clearInterval(d);
+        })
+        // 鼠标离开图片时添加自动播放
+        img.addEventListener('mouseleave',function(){
+            d = setInterval(fun,time1);
+        })
+    </script>
+</body>
+</html>
