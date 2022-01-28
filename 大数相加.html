@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="zh-en">
+<head>
+    <meta charset="UTF-8">
+    <title>大数相加</title>
+</head>
+<body>
+    <input type="number" class='a'> + 
+    <input type="number" class='b' > = 
+    <input type="text" class='z' disabled>
+    <input type="button" value="清除">
+    <script>
+        window.addEventListener('DOMContentLoaded',function(){
+            //获取按钮,添加点击事件
+            var ss = function(){
+                // 从数字输入框提取数组
+                var a = document.querySelector('.a').value.split('');
+                var b = document.querySelector('.b').value.split('');
+                // 得到输出对象
+                var z = document.querySelector('.z');
+                //计算和并输出
+                z.value = strAdd(a, b).join(''); 
+            }            
+            document.querySelector('input[value="清除"]').addEventListener('click',function(){
+                document.querySelector('.a').value = '';
+                document.querySelector('.b').value = '';
+                document.querySelector('.z').value = '';
+            })
+            document.addEventListener('keyup',function(){
+                ss();
+            })
+            //一位加法函数,a和b是加数,c是进位,参数都要为一位数字整数
+            function add(a, b, c){
+                //如果没有参数,都赋值为0;
+                if(typeof a != 'number' || isNaN(a)){a = 0};
+                if(typeof b != 'number' || isNaN(b)){b = 0};
+                if(typeof c != 'number' || isNaN(c)){c = 0};
+                var add = a + b + c;
+                //返回当前位结果和进位
+                return [add%10,parseInt(add/10)];
+            }
+
+            //数字字符串数组的加法
+            function strAdd(a, b){
+                //定义返回数组,每次加运算的值和进位
+                var str = [];
+                var sub,c;
+
+                for(var i = 1;(i<=a.length && i<=b.length) || c != 0; i++){   
+                    sub = add(parseInt(a[a.length - i]), parseInt(b[b.length - i]), c)
+                    //每次得到的数字添加到头部
+                    str.unshift(sub[0].toString());
+                    c = sub[1];
+                }
+                //得到长度更长的数组
+                var z = a.length>b.length?a:b;
+                //判断结果数组是否比最长的数组还长
+                var x = (z.length - str.length)>0?(z.length - str.length):0;
+                return z.slice(0,x).concat(str);
+            }
+        })
+
+    </script>
+</body>
+</html>
