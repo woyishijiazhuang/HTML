@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <title>侧导航栏</title>
+    <script src="jq.js"></script>
+    <style>
+        body {
+            width: 80%;
+            margin: 0px auto;
+            border: 1px black solid;
+            min-width: 800px;
+        }
+
+        .need {
+            /* list-style: none; */
+            height: 400px;
+            font: italic bold 20px/30px arial, sans-serif;
+        }
+
+        .w,
+        .end {
+            height: 400px;
+            border: 1px red ridge;
+            font: italic bold 200px/400px arial, sans-serif;
+            text-align: center;
+        }
+
+        .end {
+            height: 800px;
+        }
+
+        .slide {
+            position: fixed;
+            bottom: 200px;
+            right: 50px;
+            /* width: min-content; */
+            background-color: burlywood;
+        }
+
+        .slide>ul {
+            margin: 0px;
+            padding: 0px;
+            list-style: none;
+            font-weight: 700;
+            text-align: center;
+            cursor: pointer;
+        }
+
+        .slide li {
+            width: 40px;
+            height: 20px;
+            border: 1px red solid;
+        }
+
+        a {
+            color: black;
+            text-decoration: none;
+        }
+    </style>
+</head>
+
+<body>
+    <div>
+        <ol class="need">
+            <li><del>长页面滚动到一定地方展现侧导航栏,反之收起</del></li>
+            <li><del>导航栏出现消失是渐变</del></li>
+            <li>页面有多个栏目,导航栏可以通过点击到达各个栏目,且页面不能跳转,而是滚动</li>
+            <li>侧导航栏的导航总是根据页面位置提示</li>
+            <li>bug:连续滚动会一直打断动画,导致侧导航半透明时间过长</li>
+        </ol>
+    </div>
+    <div class="w">1</div>
+    <div class="w">2</div>
+    <div class="w">3</div>
+    <div class="w">4</div>
+    <div class="w">5</div>
+    <div class="end">end</div>
+    <div class="slide">
+        <ul>
+            <li>1</li>
+            <li>2</li>
+            <li>3</li>
+            <li>4</li>
+            <li>5</li>
+            <li>top</li>
+        </ul>
+    </div>
+    <script>
+        //实现侧导航点击页面滑动到指定位置
+        $('.slide li').each(function (i, ele) {
+            $(ele).click(function () {
+                $('html').animate({ scrollTop: $('.w').eq(i).offset().top })
+            })
+        })
+        //滑动,侧导航的淡入淡出
+        $(window).scroll(function () {
+            var t = $(this).scrollTop();
+            if (t > $('.w').eq(0).offset().top - 10) {
+                $('.slide').stop().fadeIn();
+                var slide = $('.slide').find('li');
+                slide.css('background-color', 'burlywood');
+                //判断哪个颜色变色
+                for (let i = 0; i < slide.length - 1; i++) {//因为含有top的li,所以长度减一
+                    if (t < $('.w').eq(i).offset().top + $('.w').eq(i).outerHeight() - 10) {
+                        slide.eq(i).css('background-color', 'red');
+                        break;
+                    }
+                }
+            } else {
+                $('.slide').stop().fadeOut();
+            }
+            if (t > $('.end').offset().top) {
+                $('.slide li:last-child').css('display', 'block');
+            } else {
+                $('.slide li:last-child').css('display', 'none');
+            }
+
+        })
+        //页面加载或刷新后,不满足条件就让侧导航瞬间消失
+        if ($(this).scrollTop() < $('.w').eq(0).offset().top) {
+            $('.slide').stop().fadeOut(0);
+        }
+    </script>
+</body>
+
+</html>
