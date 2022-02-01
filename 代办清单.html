@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <title>代办清单</title>
+    <script src="jq.js"></script>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        body {
+            font: 600 20px/30px consolas;
+            /* color: brown; */
+            background-color: #e5e5e5;
+        }
+
+        ul,
+        ol {
+            list-style: none;
+        }
+
+        li {
+            display: flex;
+            align-items: center;
+            justify-content: space-around;
+        }
+
+        li input {
+            width: 10%;
+            height: 20px;
+        }
+
+        li p {
+            width: 80%;
+        }
+
+        .doing li span {
+            background-image:
+                linear-gradient(217deg, rgba(255, 0, 0, .8), rgba(255, 0, 0, 0.2) 70.71%),
+                linear-gradient(127deg, rgba(0, 255, 0, .8), rgba(0, 255, 0, 0.2) 70.71%),
+                linear-gradient(336deg, rgba(0, 0, 255, .8), rgba(0, 0, 255, 0.2) 70.71%);
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        .done li span {
+            color: rgb(145, 145, 145);
+            text-decoration: line-through;
+        }
+
+        li a {
+            width: 10%;
+            text-align: center;
+            text-decoration: none;
+            color: dodgerblue;
+        }
+
+        header {
+            padding: 20px 40px;
+            background-color: #ccc;
+        }
+
+        article {
+            width: 60%;
+            min-width: 800px;
+            margin: 0 auto;
+
+        }
+
+        article * {
+            vertical-align: bottom;
+        }
+
+        header h1 {
+            margin: 0px;
+            /* padding: 0px; */
+            display: inline-block;
+            width: 30%;
+            /* margin: 1em ; */
+        }
+
+        header input[type=text] {
+            height: 26px;
+            width: 40%;
+        }
+
+        header input[type=button] {
+            width: 80px;
+            height: 30px;
+            margin: 0 20px;
+            font: 700 20px/1.5 caption;
+        }
+    </style>
+</head>
+
+<body>
+    <header>
+        <article>
+            <h1>代办清单</h1>
+            <input type="text" id='txt'>
+            <input type="button" value="添 加" id='add'>
+        </article>
+    </header>
+    <article>
+        <ul class="doing">
+        </ul>
+        <h3>&nbsp;&nbsp;已完成</h3>
+        <ul class="done">
+        </ul>
+    </article>
+    <footer></footer>
+    <script>
+        $(function () {
+            //读取本地记录 并 转换成数组
+            var doList = JSON.parse(localStorage.getItem('doList'));
+            console.log(doList)
+            if (doList === null) {
+                doList = [
+                    { do: false, title: '这些数据只在第一次出现' },
+                    { do: false, title: '希望未来能新增代办的拖动事件以调整顺序' },
+                    { do: false, title: '这是一个代办列表,它的数据存储在浏览器缓存中' },
+                ]
+            };
+
+            //加载本地记录到页面中//遍历代办数组
+            //因为删除没有重新渲染整个页面,所以不得不先给doList置空,在这里加载时删除空项
+            for (let i = 0; i < doList.length; i++) {
+                if (doList[i] === null) {
+                    doList.splice(i, 1);
+                    i--;
+                } else {
+                    addli(i, doList[i].title, doList[i].do);
+                }
+            }
+            localStorage.setItem('doList', JSON.stringify(doList));
+
+            //给按钮和输入框内的回车添加保存事件//且删除输入框的内容
+            $('#add').click(function () {
+                addtxt(); $('#txt').val('');
+            })
+            $('#txt').keyup(function (e) {
+                //如果在输入框内按下回车       
+                if (e.keyCode === 13) { addtxt(); $('#txt').val(''); }
+            })
+
+            //添加//代办的函数,会将增加的代办添加到页面并存到loaclStorage里
+            function addtxt() {
+                //获取输入的内容到li中****没有判断多空格的情况
+                if ($('#txt').val() === '') {
+                    alert('请输入内容'); return false;
+                }
+                addli(doList.length, $('#txt').val())
+                //添加到数组里并保存到内存中
+                doList.push({ do: false, title: $('#txt').val() });
+                localStorage.setItem('doList', JSON.stringify(doList));
+            }
+
+            function addli(i, txt, d) {
+                // 创建li并增加index属性编号
+                var li = $('<li></li>');
+                li.attr('index', i);
+                // 根据d的状态添加选择状态
+                li.html('<input type="checkbox"' + (d ? "checked" : "") + '><p><span>' + txt + '</span></p><a href="javascript:;">删 除</a>');
+                //根据d添加到doing或done中
+                $(d ? '.done' : '.doing').prepend(li);
+                //让新增的li在0秒内消失,重新下拉出现
+                li.slideUp(0).slideDown();
+            }
+
+            //删除操作
+            $('.doing, .done').on('click', 'a', function () {
+                //删除数组中对应的项,并保存到本地
+                doList[$(this).parent().attr('index')] = null;
+                localStorage.setItem('doList', JSON.stringify(doList));
+                $(this).parent().slideUp(function () {
+                    //DOM对象和jq对象的remove()方法一样// this.remove();
+                    $(this).remove();
+                });
+            })
+
+            //给复选框增加事件
+            $('.doing, .done').on('click', 'input[type=checkbox]', function () {
+                //点击后给do状态取反,保存
+                doList[$(this).parent().attr('index')].do = !doList[$(this).parent().attr('index')].do;
+                localStorage.setItem('doList', JSON.stringify(doList));
+                //让自己上划收起,之后重新渲染修改的数据并删除自己
+                $(this).parent().slideUp(function () {
+                    var i = $(this).attr('index');
+                    addli(i, doList[i].title, doList[i].do)
+                    $(this).remove();
+                });
+            })
+        })
+    </script>
+</body>
+
+</html>
