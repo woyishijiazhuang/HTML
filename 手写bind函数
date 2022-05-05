@@ -1,0 +1,31 @@
+// 疑问：node 运行在外面不能用var去定义，否则不能挂载到全局？
+name = 'window'
+var person = {
+	name: 'p1',
+	getName: function(){
+		console.log(this.name,...arguments)
+	}
+}
+var person2 = {
+	name: 'p2',
+	getName: function(){
+		console.log(this.name,...arguments)
+	}
+}
+// person.getName.call()
+// argument 没有 剩余参数 好用，挂载到原型上要写在前面
+Function.prototype.myCall = function(context, ...arg){
+	if(typeof this !== 'function'){
+		throw Error('this is not function')
+	}
+  // 这里之前是call的实现，增加返回一个函数，则实现了bind
+	return (...arg1) => {
+		const fun = Symbol('fun')
+		context[fun] = this
+		context[fun](...arg, ...arg1)
+		delete context[fun]
+	}
+	
+}
+person2.getName.myCall(person,2)(1)
+// console.log(person)
