@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>borderRadius</title>
+	</head>
+	<style>
+		body, div, input, label {
+			margin: 0;
+			padding: 0;
+			box-sizing: border-box;
+		}
+		body {
+			min-width: 980px;
+		}
+		.container {
+			width: 100%;
+			height: 100vh;
+			display: flex;
+			justify-content: space-between;
+		}
+		.left {
+			width: 50%;
+			height: inherit;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+		.right {
+			width: 50%;
+			height: inherit;
+			display: flex;
+			flex-direction: column;
+			justify-content: center;
+		}
+		.right > div {
+			padding: 10px 40px;
+		}
+		.right > div > label {
+			display: inline-block;
+			width: 80px;
+		}
+		.box {
+			width: 204px;
+			height: 204px;
+			border: 2px black dashed;
+			position: relative;
+			--dot: -5px;
+		}
+		#box_min {
+			width: 204px;
+			height: 204px;
+			position: absolute;
+			top: -2px;
+			left: -2px;
+			border: 2px gray solid;
+			border-radius: 50%;
+		}
+		.box .dot {
+			position: absolute;
+			width: 8px;
+			height: 8px;
+			background-color: red;
+			border-radius: 50%;
+		}
+		.box .dot:nth-child(1){
+			/* top: -5px; */
+			top: var(--dot);
+			left: 50%;
+			transform: translateX(-50%);
+		}
+		.box .dot:nth-child(2){
+			right: var(--dot);
+			top: 50%;
+			transform: translateY(-50%);
+		}
+		.box .dot:nth-child(3){
+			bottom: var(--dot);
+			left:50%;
+			transform: translateX(-50%);
+		}
+		.box .dot:nth-child(4){
+			left: var(--dot);
+			top: 50%;
+			transform: translateY(-50%);
+		}
+		#dot_css {
+			width: 16rem;
+		}
+	</style>
+	<body>
+		<div class="container">
+			<div class="left">
+				<div class="box">
+					<div class="dot"></div>
+					<div class="dot"></div>
+					<div class="dot"></div>
+					<div class="dot"></div>
+					<div id="box_min"></div>
+				</div>
+			</div>
+			<div class="right">
+				<h3>获取输入框焦点后用键盘↑↓调整数字</h3>
+				<div>
+					<label for="dot_top">top :</label>
+					<input id="dot_top" type="number" max="100" min="0" value="50" onchange="changeDot(this.value,0)">
+				</div>
+				<div>
+					<label for="dot_right">right :</label>
+					<input id="dot_right" type="number" max="100" min="0" value="50" onchange="changeDot(this.value,1)">
+				</div>
+				<div>
+					<label for="dot_bottom">bottom :</label>
+					<input id="dot_bottom" type="number" max="100" min="0" value="50" onchange="changeDot(this.value,2)">
+				</div>
+				<div>
+					<label for="dot_left">left :</label>
+					<input id="dot_left"type="number" max="100" min="0" value="50" onchange="changeDot(this.value,3)">
+				</div>
+				<div>
+					<label for="dot_css">css :</label>
+					<input id="dot_css" type="text" disabled placeholder="50%" value="50%">
+				</div>
+				<!-- <p>ps: 拖动圆点调整待定</p> -->
+				<script>
+					const dots = document.querySelectorAll(".dot")
+					function changeDot(value, index){
+						const leftORtop = (index == 0 || index == 2)?'left':'top';
+						dots[index].style[leftORtop] = value + '%';
+						const borderRadiusValue = `${dot_top.value}% ${100-dot_top.value}% ${100-dot_bottom.value}% ${dot_bottom.value}% / ${dot_left.value}% ${dot_right.value}% ${100-dot_right.value}% ${100-dot_left.value}%`;
+						box_min.style.borderRadius = borderRadiusValue;
+						dot_css.value = borderRadiusValue;
+					}
+				</script>		
+			</div>
+		</div>
+	</body>
+</html>
