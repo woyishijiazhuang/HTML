@@ -26,12 +26,15 @@
         user-select: none;
         background-color: rgba(100, 100, 100, 0.8);
     }
+    .close {
+		user-select: none;
+	}
 </style>
 <body>
     
     <div class="login">
         <h2>login</h2>
-        <div class="close"></div>
+        <div class="close">尝试鼠标长按灰色区域，拖动窗口</div>
     </div>
     <script>
         var login = document.querySelector('.login>h2');
