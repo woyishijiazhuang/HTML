@@ -62,26 +62,31 @@
 			height: 8px;
 			background-color: red;
 			border-radius: 50%;
+			z-index: 99;
+			transition: box-shadow .3s ease-out;
+		}
+		.box .dot:hover {
+			box-shadow: 0px 0px 2px 2px #f00;
 		}
 		.box .dot:nth-child(1){
 			/* top: -5px; */
 			top: var(--dot);
-			left: 50%;
+			left: 98px;
 			transform: translateX(-50%);
 		}
 		.box .dot:nth-child(2){
 			right: var(--dot);
-			top: 50%;
+			top: 98px;
 			transform: translateY(-50%);
 		}
 		.box .dot:nth-child(3){
 			bottom: var(--dot);
-			left:50%;
+			left:98px;
 			transform: translateX(-50%);
 		}
 		.box .dot:nth-child(4){
 			left: var(--dot);
-			top: 50%;
+			top: 98px;
 			transform: translateY(-50%);
 		}
 		#dot_css {
@@ -121,9 +126,12 @@
 					<label for="dot_css">css :</label>
 					<input id="dot_css" type="text" disabled placeholder="50%" value="50%">
 				</div>
-				<!-- <p>ps: 拖动圆点调整待定</p> -->
+				<p>ps: 鼠标松开事件偶尔触发失败，zhe个有点问题，后续希望增加一键复制，圆角尝试改成贝塞尔曲线</p>
 				<script>
-					const dots = document.querySelectorAll(".dot")
+					// 获取四个点
+					const dots = document.querySelectorAll(".dot");
+					
+					// 输入框的值改变时，动态调整内圆的样式
 					function changeDot(value, index){
 						const leftORtop = (index == 0 || index == 2)?'left':'top';
 						dots[index].style[leftORtop] = value + '%';
@@ -131,6 +139,36 @@
 						box_min.style.borderRadius = borderRadiusValue;
 						dot_css.value = borderRadiusValue;
 					}
+					var fun;
+					// 给四个点绑定拖动事件，并改变输入框的值、内圆样式
+					dots.forEach((item, index)=>{
+						item.addEventListener('mousedown',function(e){
+						const that = this;
+						const XorY = (index == 0 || index == 2)?true:false;
+						const mouseXorY = e[XorY?'clientX':'clientY'];
+						const lt = XorY?'left':'top';
+						const e_dot_leftORtop = parseInt(getComputedStyle(this)[lt]);
+						console.log(e_dot_leftORtop);
+						document.addEventListener('mousemove',fun = function (event){
+							const dot_lt = e_dot_leftORtop + (event[XorY?'clientX':'clientY'] - mouseXorY);
+							if(dot_lt < 0){
+								that.style[lt] = '0px';
+							}else if(dot_lt > 200){
+								that.style[lt] = '200px';
+							}else{
+								that.style[lt] = dot_lt + 'px';
+								const DotInput = document.querySelectorAll("input")[index];
+		
+								changeDot(DotInput.value = parseInt(dot_lt/2), index)
+							}
+						})
+					})
+					})
+					
+					// 鼠标按键松开时，取消鼠标移动事件
+					document.addEventListener('mouseup',function(event){
+						document.removeEventListener('mousemove',fun);
+					})
 				</script>		
 			</div>
 		</div>
