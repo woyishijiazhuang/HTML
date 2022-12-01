@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title>自适应瀑布流布局</title>
+	</head>
+	<style type="text/css">
+		* {
+			margin: 0;
+			padding: 0;
+		}
+		.container {
+			width: 90%;
+			min-width: 220px;
+			min-height: 220px;
+			margin: 0 auto;
+			border: 1px solid black;
+			display: flex;
+			justify-content: space-around;
+			/* align-items: flex-start; */
+			
+		}
+		.container > div {
+			width: 220px;
+			height: auto;
+			border: 1px solid red;
+
+		}
+		.container > div > div {
+			margin-bottom: 20px;
+			border: 1px solid blue;
+			display: flex;
+			justify-content: center;
+			align-items: center;
+		}
+	</style>
+	<body>
+		<p>
+			请尝试改变页面宽度
+			<br />
+			bug: 每次列数改变都会让图片的高度随机变化，因为渲染时给的是随机高度
+			<br />
+			如果有可能，尝试预存每一张图片的高度，并在每次刷到底部时，添加新的图片
+		</p>
+		<div class="container">
+
+		</div>
+	</body>
+	<script type="text/javascript">
+		var img = {
+			width: 220, // 图片宽度
+			content: 50, // 所有图片数量
+			clum: 0, // 图片列数
+			clumTop:[],// 每列的高度
+		}
+		// 图片容器
+		var container = document.querySelector('.container')
+		
+		// 计算列数，创建文档碎片，创建列，往列里添加图片
+		function countClum(){
+			const clum = Math.floor(container.clientWidth/img.width)
+			if(clum === img.clum){
+				return
+			}else{
+				// 重置列数，和列高度
+				img.clum = clum
+				img.clumTop = []
+				
+				// 创建文档碎片，添加图片
+				let newContainer = document.createDocumentFragment()
+				for(let i = 0; i<clum; i++){
+					img.clumTop.push(0)
+					newContainer.appendChild(document.createElement('div'))
+				}
+				addImg(newContainer)
+				
+				// 清空容器内容，添加新的图片流
+				container.innerHTML = ''
+				container.append(newContainer)
+			}
+			
+		}
+		
+		// 添加图片
+		function addImg(newContainer){
+			var clums = newContainer.querySelectorAll('div')
+			// 取到高度最小的 clum，创建图片并添加
+			for(let i = 0; i < img.content; i++){
+				const newimg = document.createElement('div')
+				newimg.style.width = img.width + 'px'
+				// 随机给图片一个高度
+				let randomHeight = 110 + Math.random()*220
+				newimg.style.height = randomHeight + 'px'
+				newimg.innerText = i;
+				// 获取高度最小的clum
+				let index = 0;
+				for(let i = 1; i<img.clumTop.length; i++){
+					if(img.clumTop[index]>img.clumTop[i]){
+						index = i
+					}
+				}
+				clums[index].appendChild(newimg)
+				img.clumTop[index] += randomHeight + 20
+			}
+		}
+		
+		// 页面宽度改变时，重新计算一次列数
+		window.onresize = function(){
+			countClum()
+		}
+		countClum()
+		
+	</script>
+</html>
