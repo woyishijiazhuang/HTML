@@ -6,7 +6,18 @@
     <title>代办清单</title>
     <script src="jq.js"></script>
     <style>
-        * {
+        html,
+        body,
+        ul,
+        ol,
+        li,
+        input,
+        p,
+        span,
+        a,
+        article,
+        header,
+        h1 {
             margin: 0px;
             padding: 0px;
         }
@@ -119,16 +130,17 @@
     <script>
         $(function () {
             // 读取本地记录
-            var doList = JSON.parse(localStorage.getItem('doList')) || [];
-            if (doList.length == 0) {
+            var doList = JSON.parse(localStorage.getItem('doList'));
+            if (doList === null) {
                 doList = [
                     { id: 0, do: false, title: '这些数据只在第一次出现' },
                     { id: 1, do: false, title: '它已经新增了代办的拖动事件以调整顺序' },
                     { id: 2, do: true, title: '这是一个代办列表,它的数据存储在浏览器缓存中' },
+                    { id: 3, do: true, title: 'bug:添加太快会导致id相同，有时还会出现空id空值的项' },
                 ]
             };
 
-            // 根据数据添加li
+            // 根据数据添加li，翻转数组是为了让后添加的数据出现在最前面
             $('#doing').prepend(doList.map(item => !item.do ? createItem(item) : null).reverse())
             $('#done').prepend(doList.map(item => item.do ? createItem(item) : null).reverse())
 
@@ -137,82 +149,134 @@
                 .on('click', 'a', delItem)
                 .on('click', 'input', toggleItem)
                 .on('dragstart', 'li', function (e) {
+                    // li拖动开始，异步添加类名，保证拖出来的元素不会应用新的class
                     setTimeout(() => e.target.classList.add('moving'), 0)
                 })
                 .on('dragenter', 'li', function (e) {
-                    // 往上还是往下，调整doList顺序，并存储
+                    // 拖动到哪个li上？
+                    // 获取拖动起来的dom-li
                     const oldNode = $('.moving')
+
+                    // 拖动的li对应的代办数据项
+                    // 因为在for里，不知道先循环到谁，所以提前设置newItem
                     const newItem = { id: oldNode.attr('index'), do: false, title: oldNode.find('span').text() }
-                    if(newItem.id == $(e.currentTarget).attr('index')){return}
+                    // 如果拖到自己身上就直接结束
+                    if (newItem.id == $(e.currentTarget).attr('index')) { return }
+                    // 如果拖到别的dom-li上，把旧dom-li，添加到新dom-li的下方
                     $(e.currentTarget).after(oldNode)
+                    // 修改dolist数据，并保存
+
                     const newdoList = []
-                    for(const item of doList){
-                        if(item.id == $(e.currentTarget).attr('index')){
+                    // 把拖动的li放在被拖入的下边
+                    // 把拖动的dom-li-checked设置成被拖入的
+                    const eCurrentTargetAttrIndex = $(e.currentTarget).attr('index')
+                    for (const item of doList) {
+                        if (item.id == eCurrentTargetAttrIndex) {
                             newdoList.push(newItem)
                             newItem.do = item.do
-                            oldNode.children('input').prop('checked',item.do)
+                            oldNode.children('input').prop('checked', item.do)
                         }
-                        if(item.id != newItem.id){
+                        if (item.id != newItem.id) {
                             newdoList.push(item)
                         }
                     }
+                    // 保存
                     doList = newdoList
                     localStorage.setItem('doList', JSON.stringify(doList))
                 })
                 .on('dragend', 'li', function (e) {
+                    // li拖动结束，移除class
                     e.target.classList.remove('moving')
                 })
 
+            // 删除某一项代办，接受代办内删除链接的事件对象
             function delItem(e) {
+                // 获取dom-li
                 var li = $(e.target).parent()
-                li.slideUp(li.remove)
-                doList = doList.filter(item => item.id != li.attr('index'))
+                // 收起dom后，删除dom
+                li.slideUp(()=>li.remove())
+                // 过滤dolist并存储
+                var newdoList = []
+                for(const item of doList){
+                    if(item.id == li.attr('index')){
+                        continue
+                    }
+                    newdoList.push(item)
+                }
+                doList = newdoList
+                // doList = doList.filter(item => item.id != li.attr('index'))
                 localStorage.setItem('doList', JSON.stringify(doList))
             }
 
+            // 点击checkBox切换某一项代办的状态，参数为checkbox的点击事件对象
             function toggleItem(e) {
+                // 根据事件对象获取父元素li节点
                 var li = $(e.target).parent()
+
                 var newItem = {}
+                // 过滤掉dolist中点击的item
                 var newdoList = doList.filter(item => {
                     if (item.id != li.attr('index')) {
                         return true
                     } else {
+                        // 把旧的item给新item，设置选择状态
                         newItem = item
                         newItem.do = e.target.checked
                         return false
                     }
                 })
+                // 新item添加到dolist中
                 newdoList.push(newItem)
                 doList = newdoList
+                // 将点击的dom收起，回调=》根据checked状态添加到done或doing中
                 li.slideUp(() => $(e.target.checked ? '#done' : '#doing').prepend(li.slideDown()))
+                // 存储dolist
                 localStorage.setItem('doList', JSON.stringify(doList))
             }
 
+            // 根据数据创建单个DOM-li节点
             function createItem(item) {
-                return $(`<li index=${item.id} draggable="true">
+                return $(`<li index="${item.id}" draggable="true">
                     <input type="checkbox" ${item.do ? "checked" : ''}>
                     <p><span>${item.title}</span></p>
                     <a href="javascript:;">删 除</a>
                 </li>`)
             }
 
+            // 新增代办，回车或者点击添加按钮
             $('#add').click(addtxt)
 
             $('#txt').keyup(function (e) {
                 e.keyCode === 13 && addtxt()
             })
 
+            // 添加代办的函数
+            var addBoolean = true
             function addtxt() {
+                console.log(doList)
+                if(addBoolean === false){return }
+                addBoolean = false
+                setTimeout(()=>{
+                    addBoolean = true
+                },1000)
+                // 获取input对象。去除首尾空格
                 const title = $('#txt')
-                if (title.val() === '') {
+                // input空值，不做操作，返回false
+                if (title.val().trim() === '') {
                     return false;
                 } else {
-                    const newItem = { id: new Date(), do: false, title: title.val() }
+                    // 创建新的待办项数据
+                    const id = (new Date()).toString()
+                    const newItem = { id: id, do: false, title: title.val() }
+                    // 添加到数组内
                     doList.push(newItem)
+                    // 根据数据创建dom，添加到代办的最上面，用0s收起，然后展开实现动画
                     var li = createItem(newItem)
                     $('#doing').prepend(li)
                     li.slideUp(0).slideDown()
+                    // 置空input
                     title.val('')
+                    // 保存本地
                     localStorage.setItem('doList', JSON.stringify(doList))
                 }
             }
