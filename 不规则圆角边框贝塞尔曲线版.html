@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <style>
+        * {
+            margin: 0px;
+            padding: 0px;
+        }
+
+        main {
+            display: flex;
+            height: 100vh;
+            min-width: 900px;
+        }
+
+        .left {
+            width: 60%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .right {
+            width: 40%;
+            display: flex;
+            flex-direction: column;
+            justify-items: center;
+            justify-content: space-evenly;
+            align-items: baseline;
+        }
+    </style>
+</head>
+
+<body>
+    <main>
+        <div class="left">
+            <svg xmlns="http://www.w3.org/2000/svg" version="1.1" width="400" height="400"
+                style="overflow: visible;--dotAx:200;">
+                <!-- 矩形、曲线、圆点、文字 -->
+                <rect width="400" height="400" style="fill:white; stroke-width:1;stroke:rgb(0,0,0)" />
+                <g>
+                    <!-- D -> (0, 0) -> A -->
+                    <path d="M 0 200 Q 0 0, 200 0" stroke="blue" stroke-width="5" fill="none" />
+                    <!-- A -> (400, 0) -> B -->
+                    <path d="M 200 0 Q 400 0, 400 200" stroke="blue" stroke-width="5" fill="none" />
+                    <!-- B -> (0, 0) -> C -->
+                    <path d="M 400 200 Q 400 400, 200 400" stroke="blue" stroke-width="5" fill="none" />
+                    <!-- C -> (0, 0) -> D -->
+                    <path d="M 200 400 Q 0 400, 0 200" stroke="blue" stroke-width="5" fill="none" />
+                </g>
+
+                <g stroke="black" stroke-width="3" fill="black">
+                    <!-- <circle r="3" /> -->
+                    <circle cx="200" cy="0" r="3" />
+                    <circle cx="400" cy="200" r="3" />
+                    <circle cx="200" cy="400" r="3" />
+                    <circle cx="0" cy="200" r="3" />
+                </g>
+                <g font-size="30" font="sans-serif" fill="black" stroke="none" text-anchor="middle">
+                    <text x="200" y="0" dy="-10">A</text>
+                    <text x="400" y="200" dx="30" dy="10">B</text>
+                    <text x="200" y="400" dy="30">C</text>
+                    <text x="0" y="200" dx="-30" dy="10">D</text>
+                </g>
+                
+            </svg>
+        </div>
+        <div class="right">
+            <input type="number" min="1" max="399" value="200" onchange="(dot[0].x = this.value) && change(0)">
+            <input type="number" min="1" max="399" value="200" onchange="(dot[1].y = this.value) && change(1)">
+            <input type="number" min="1" max="399" value="200" onchange="(dot[2].x = this.value) && change(2)">
+            <input type="number" min="1" max="399" value="200" onchange="(dot[3].y = this.value) && change(3)">
+        </div>
+    </main>
+    <script>
+        
+        var dot = [
+            { x: 200, y: 0 },
+            { x: 400, y: 200 },
+            { x: 200, y: 400 },
+            { x: 0, y: 200 }
+        ]
+
+        var change = (function () {
+
+            // 四条曲线
+            const pathList = document.querySelectorAll(".left path")
+            // 四个点
+            const circleList = document.querySelectorAll(".left circle")
+            // 四个文本
+            const textList = document.querySelectorAll(".left text")
+            // 更改曲线的方法
+            const changeBorder = n => pathList[n].setAttribute('d', `M ${dot[(n + 3)%4].x} ${dot[(n + 3)%4].y} Q ${(n == 0 || n == 3) ? 0 : 400} ${n < 2 ? 0 : 400}, ${dot[n].x} ${dot[n].y}`)
+            // input事件
+            return function (inputDom) {
+
+                // 移动对应的点和文字
+                const xORy = inputDom%2 == 0 ? 'x' : 'y'
+                circleList[inputDom].setAttribute(`c${xORy}`, dot[inputDom][xORy])
+                textList[inputDom].setAttribute(xORy, dot[inputDom][xORy])
+
+                // 改变点相邻的曲线
+                changeBorder(inputDom)
+                changeBorder((inputDom + 1)%4)
+
+            }
+
+        })()
+
+
+        // 优化input
+        // svg中组合字母和点，
+        // 是否能够使用css的变量或js变量
+        // 拖拽
+    </script>
+</body>
+
+</html>
