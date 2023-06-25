@@ -4,11 +4,12 @@
 		<meta charset="UTF-8">
 		<title>大数相加</title>
 		<style>
-			.a,
-			.b,
-			.z {
+			.input-a,
+			.input-b,
+			.input-z {
 				width: 100%;
 				height: 3em;
+				box-sizing: border-box;
 			}
 
 			input::-webkit-outer-spin-button,
@@ -23,66 +24,66 @@
 		</style>
 	</head>
 	<body>
-		<p>输入big数字的时候不要用键盘↑↓进行加减，BigInt将会更适合</p>
-		<input type="number" class='a'> +
-		<input type="number" class='b'> =
-		<input type="text" class='z' disabled>
+		
+		<p>输入big数字的时候不要用键盘↑↓进行加减，BigInt将会更适合，这里同样无法计算负值</p>
+		<input type="number" class='input-a'> +
+		<input type="number" class='input-b'> =
+		<input type="text" class='input-z' disabled>
 		<input type="button" value="清除">
+
 		<script>
 			window.addEventListener('DOMContentLoaded', function() {
-				//获取按钮,添加点击事件
-				var ss = function() {
-					// 从数字输入框提取数组
-					var a = document.querySelector('.a').value.split('');
-					var b = document.querySelector('.b').value.split('');
-					// 得到输出对象
-					var z = document.querySelector('.z');
-					//计算和并输出
-					z.value = strAdd(a, b).join('');
+				//获取按钮,添加点击事件,此处实时计算结果，考虑到性能可以做防抖，或者放到按钮的事件监听里
+				const sum = function(delay = 2000) {
+					let timer;
+					return () => {
+						timer && clearTimeout(timer);
+						timer = setTimeout(() => {
+							// 从数字输入框提取数组
+							var a = document.querySelector('.input-a').value;
+							var b = document.querySelector('.input-b').value;
+							// 得到输出对象
+							var z = document.querySelector('.input-z');
+							//计算和并输出
+							z.value = strAdd(a, b);
+						},delay)
+					}
 				}
+				document.addEventListener('keyup', sum(1000))
+
+				// 点击清除时，清除所有输入
 				document.querySelector('input[value="清除"]').addEventListener('click', function() {
-					document.querySelector('.a').value = '';
-					document.querySelector('.b').value = '';
-					document.querySelector('.z').value = '';
+					document.querySelector('.input-a').value = '';
+					document.querySelector('.input-b').value = '';
+					document.querySelector('.input-z').value = '';
 				})
-				document.addEventListener('keyup', function() {
-					ss();
-				})
+
 				//一位加法函数,a和b是加数,c是进位,参数都要为一位数字整数
 				function add(a, b, c) {
-					//如果没有参数,都赋值为0;
-					if (typeof a != 'number' || isNaN(a)) {
-						a = 0
-					};
-					if (typeof b != 'number' || isNaN(b)) {
-						b = 0
-					};
-					if (typeof c != 'number' || isNaN(c)) {
-						c = 0
-					};
-					var add = a + b + c;
-					//返回当前位结果和进位
-					return [add % 10, parseInt(add / 10)];
+					let add = a + b + c;
+					//返回当前个位结果 和 进位
+					return [add % 10, Math.floor(add / 10)];
 				}
 
 				//数字字符串数组的加法
 				function strAdd(a, b) {
-					//定义返回数组,每次加运算的值和进位
-					var str = [];
-					var sub, c;
+					// 将长度更长的字符串放进a， 短的放进b,补充0，转换成同等长度的数字数组
+					[a, b] = a.length > b.length ? [a, b] : [b, a];
+					a = a.split('').map(v => parseInt(v));
+					b = b.padStart(a.length, 0).split('').map(v => parseInt(v));
 
-					for (var i = 1;
-						(i <= a.length && i <= b.length) || c != 0; i++) {
-						sub = add(parseInt(a[a.length - i]), parseInt(b[b.length - i]), c)
+					//定义返回数组,每次加运算的个位，进位
+					const result = [];
+					let one, carry = 0;
+					while (a.length) {
+						[one, carry] = add( a.pop(), b.pop(), carry )
 						//每次得到的数字添加到头部
-						str.unshift(sub[0].toString());
-						c = sub[1];
+						result.unshift(one);
 					}
-					//得到长度更长的数组
-					var z = a.length > b.length ? a : b;
-					//判断结果数组是否比最长的数组还长
-					var x = (z.length - str.length) > 0 ? (z.length - str.length) : 0;
-					return z.slice(0, x).concat(str);
+
+					if( carry != 0) result.unshift(carry);
+
+					return result.join('')
 				}
 			})
 		</script>
