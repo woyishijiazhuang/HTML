@@ -4,6 +4,12 @@
 
 [主页](https://woyishijiazhuang.github.io/HTML/)
 
+[动态炫彩背景](https://woyishijiazhuang.github.io/HTML/动态炫彩背景.html)
+```
+对背景重复方向的探索,如果不是从上往下,从左往右,从左上往右下 这三个方向重复,调整浏览器大小就会导致背景移动不正常.
+找到了使用svg替代的可能,彩色背景是真好看.
+```
+
 [不规则圆角边框贝塞尔曲线版](https://woyishijiazhuang.github.io/HTML/不规则圆角边框贝塞尔曲线版.html)
 ```
 这个版本是通过svg绘制的贝塞尔圆角，一定听说过200w更换小米logo吧，就是那个哦。
@@ -15,7 +21,7 @@
 看到别人写水滴形状，就想着自己写了一个类似的，支持拖动，但是松开鼠标的事件经常会莫名的不触发。
 ```
 
-[代办清单](https://woyishijiazhuang.github.io/HTML/待办清单.html)
+[代办清单](https://woyishijiazhuang.github.io/HTML/代办清单.html)
 ```
 用的jq，挺好用的mvc框架，功能都在页面里描述了。
 ```
@@ -23,12 +29,6 @@
 [侧导航栏](https://woyishijiazhuang.github.io/HTML/侧导航栏.html)
 ```
 手写的练练手，jq里面还是蛮多坑的，也确实是个老家伙了。
-```
-
-[动态炫彩背景](https://woyishijiazhuang.github.io/HTML/动态炫彩背景.html)
-```
-对背景重复方向的探索,如果不是从上往下,从左往右,从左上往右下 这三个方向重复,调整浏览器大小就会导致背景移动不正常.
-找到了使用svg替代的可能,彩色背景是真好看.
 ```
 
 [大数相加](https://woyishijiazhuang.github.io/HTML/大数相加.html)
