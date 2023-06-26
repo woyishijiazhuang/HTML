@@ -1,0 +1,8 @@
+    <svg width="200" height="200" xmlns="http://www.w3.org/2000/svg" style="vector-effect: non-scaling-stroke;" >
+         <line stroke="#ff7f00" stroke-opacity="0.25" stroke-width="6" y2="50" x2="200" y1="50" x1="0" />
+         <line stroke="#ff7f00" stroke-opacity="0.25" stroke-width="6" y2="63" x2="200" y1="63" x1="0" />
+         <line y2="116" x2="200" y1="116" x1="0" stroke-opacity="0.25" stroke-width="50" stroke="#ffce00" />
+         <line y2="200" x2="116" y1="0" x1="116" stroke-opacity="0.25" stroke-width="50" stroke="#ffce00" />
+         <line y2="200" x2="50" y1="0" x1="50" stroke-opacity="0.25" stroke-width="6" stroke="#ff7f00" />
+         <line y2="200" x2="63" y1="0" x1="63" stroke-opacity="0.25" stroke-width="6" stroke="#ff7f00" />
+    </svg>

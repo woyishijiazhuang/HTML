@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>重复的格子纹背景</title>
+    <style>
+        body {
+            display: flex;
+            margin: 0;
+            padding: 0;
+            width: 100%;
+            height: 100vh;
+            flex-direction: column;
+            justify-content: space-around;
+            align-items: center;
+            transition: all 1s;
+            /* background:
+            repeating-linear-gradient(90deg, 
+                transparent, transparent 50px,
+                rgba(255, 127, 0, 0.25) 50px, rgba(255, 127, 0, 0.25) 56px,
+                transparent 56px, transparent 63px,
+                rgba(255, 127, 0, 0.25) 63px, rgba(255, 127, 0, 0.25) 69px,
+                transparent 69px, transparent 116px,
+                rgba(255, 206, 0, 0.25) 116px, rgba(255, 206, 0, 0.25) 166px),
+            repeating-linear-gradient(0deg, 
+                transparent, transparent 50px,
+                rgba(255, 127, 0, 0.25) 50px, rgba(255, 127, 0, 0.25) 56px,
+                transparent 56px, transparent 63px,
+                rgba(255, 127, 0, 0.25) 63px, rgba(255, 127, 0, 0.25) 69px,
+                transparent 69px, transparent 116px,
+                rgba(255, 206, 0, 0.25) 116px, rgba(255, 206, 0, 0.25) 166px),
+            repeating-linear-gradient(-45deg, transparent, transparent 5px,
+                rgba(143, 77, 63, 0.25) 5px, rgba(143, 77, 63, 0.25) 10px),
+            repeating-linear-gradient(45deg, transparent, transparent 5px,
+                rgba(143, 77, 63, 0.25) 5px, rgba(143, 77, 63, 0.25) 10px); */
+        }
+
+        .bg0 {
+            background: url(./svg/geziwen.svg), url(./svg/xiewen.svg);
+            background-repeat: repeat;
+        }
+
+        .bg1 {
+            background:
+                repeating-linear-gradient(90deg, transparent 0 50px,
+                    rgba(255, 127, 0, 0.25) 50px 56px,
+                    transparent 56px 63px,
+                    rgba(255, 127, 0, 0.25) 63px 69px,
+                    transparent 69px 116px,
+                    rgba(255, 206, 0, 0.25) 116px 166px),
+                repeating-linear-gradient(180deg, transparent 0 50px,
+                    rgba(255, 127, 0, 0.25) 50px 56px,
+                    transparent 56px 63px,
+                    rgba(255, 127, 0, 0.25) 63px 69px,
+                    transparent 69px 116px,
+                    rgba(255, 206, 0, 0.25) 116px 166px),
+                repeating-linear-gradient(135deg, transparent 0 5px,
+                    rgba(143, 77, 63, 0.25) 5px 10px),
+                repeating-linear-gradient(45deg, transparent 0 5px,
+                    rgba(143, 77, 63, 0.25) 5px 10px);
+        }
+
+        .bg2 {
+            background: linear-gradient(135deg, #ff6d6d, #6969f9, #98f498, #f4f484, #ff6d6d, #6969f9);
+            background-size: 600%;
+            background-repeat: no-repeat;
+            animation: bg-move 8s linear infinite;
+        }
+
+        div[class^="plan"] {
+            width: 300px;
+            background-color: rgba(255, 255, 255, 0.6);
+            border-radius: 10px;
+            box-shadow: 0 0 1px 1px #ccc;
+            padding: 1rem;
+        }
+
+        pre {
+            background-color: #363636;
+            color: white;
+            padding: 1rem;
+            border-radius: 1rem;
+        }
+
+        button {
+            width: 100%;
+            text-align: center;
+            line-height: 1.5rem;
+            border-radius: 0.5rem;
+        }
+
+        button:hover {
+            cursor: pointer;
+            background-color: #ccc;
+        }
+
+        @keyframes bg-move {
+            0% {
+                background-position: 0% 0%;
+            }
+
+            100% {
+                background-position: 100% 100%;
+            }
+        }
+    </style>
+</head>
+
+<body class="bg2">
+    <div class="plan1">
+        <pre>background: url(./svg/xxx.svg)</pre>
+        <button>格子纹背景svg实现</button>
+    </div>
+    <div class="plan2" title="改变窗口大小时，背景会变动，推荐svg实现">
+        <pre>background: repeating-linear-gradient()</pre>
+        <button>格子纹背景重复线性变化实现</button>
+    </div>
+    <div class="plan3">
+        <pre>background: repeating-linear-gradient&#10;@keyframes bg-move</pre>
+        <button>重复彩色流光背景</button>
+    </div>
+</body>
+<script>
+    const btArr = document.querySelectorAll("button");
+    [...btArr].map((item, i) => {
+        item.onclick = () => {
+            document.body.className = `bg${i}`
+        }
+    })
+</script>
+
+</html>
