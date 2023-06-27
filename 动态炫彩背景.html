@@ -4,7 +4,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>重复的格子纹背景</title>
+    <title>对于重复背景渲染方向的探索</title>
+    <meta name="description" content="背景的重复方向总是由浏览器决定，而浏览器调整大小时，如果背景不是从左上角渲染，就会导致背景变动，这是一个小小的探索">
     <style>
         body {
             display: flex;
@@ -64,7 +65,7 @@
 
         .bg2 {
             background: linear-gradient(135deg, #ff6d6d, #6969f9, #98f498, #f4f484, #ff6d6d, #6969f9);
-            background-size: 600%;
+            background-size: 800%;
             background-repeat: no-repeat;
             animation: bg-move 8s linear infinite;
         }

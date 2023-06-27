@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="zh-cn">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>clip-path实现贝塞尔曲线的裁剪</title>
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: space-evenly;
+            align-items: center;
+            height: 100vh;
+        }
+
+        #main {
+            width: 200px;
+            height: 200px;
+            /* background-color: darkseagreen; */
+            clip-path: none;
+
+            background: linear-gradient(135deg, #ff6d6d, #6969f9, #98f498, #f4f484, #ff6d6d, #6969f9);
+            background-size: 800%;
+            background-repeat: no-repeat;
+            animation: bg-move 8s linear infinite;
+            clip-path: 
+            path(
+                "m150,0 q50,0 50 50 l0,100 q0,50 -50,50 l-100,0 q-50,0 -50,-50 l0,-100 q0,-50 50,-50 l100,0"
+            );
+        }
+        .shuru {
+            height: 200px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-around;
+            /* resize: both;
+            overflow: hidden; */
+        }
+        @keyframes bg-move {
+            0% {
+                background-position: 0% 0%;
+            }
+
+            100% {
+                background-position: 100% 100%;
+            }
+        }
+        textarea {
+            font-family: "Consolas";
+        }
+    </style>
+</head>
+
+<body>
+    <div id="main">
+
+    </div>
+    <div class="shuru">
+        <div>
+            <label for="w">宽度：</label>
+            <input id="w" name="w" type="number" min="1" value="200" disabled>
+        </div>
+
+        <div>
+            <label for="h">高度：</label>
+            <input id="h" name="h" type="number" min="1" value="200" disabled>
+        </div>
+        <textarea id="c" cols="30" rows="12">
+clip-path：
+path("m150,0 q50,0 50 50 
+    l0,100 q0,50 -50,50 
+    l-100,0 q-50,0 -50,-50 
+    l0,-100 q0,-50 50,-50 
+    l100,0");
+        </textarea>
+        <button onclick="clickHandle()">生成clip-path</button>
+    </div>
+    <script>
+        function clickHandle(){
+            alert("等待实现")
+            // console.log(w, h, c)
+        }
+    </script>
+</body>
+
+</html>
